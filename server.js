@@ -38,7 +38,7 @@ app.post('/save-attempt', (req, res) => {
 
 // Ruta para obtener los datos de data.json
 app.get('/data', (req, res) => {
-    const filePath = path.join(__dirname, 'data', 'data.json');
+    const filePath = path.join(__dirname, 'data.json');
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error al leer el archivo data.json:', err);
@@ -50,7 +50,7 @@ app.get('/data', (req, res) => {
 
 // Ruta para descargar el archivo data.json
 app.get('/download-data', (req, res) => {
-    const filePath = path.join(__dirname, 'data', 'data.json');
+    const filePath = path.join(__dirname, 'data.json');
     res.download(filePath, 'data.json', (err) => {
         if (err) {
             console.error('Error al descargar el archivo:', err);
@@ -66,7 +66,7 @@ app.get('/view-data', (req, res) => {
         return res.status(403).send('Acceso denegado');
     }
 
-    const filePath = path.join(__dirname, 'data', 'data.json');
+    const filePath = path.join(__dirname, 'data.json');
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error al leer el archivo:', err);
