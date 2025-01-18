@@ -5,25 +5,13 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para parsear JSON
+// Configurar express para parsear JSON
 app.use(express.json());
+
+// Servir archivos estáticos desde el directorio public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Definir la ruta del archivo en /tmp
-const dataDir = path.join(__dirname, 'tmp');
-const dataPath = path.join(dataDir, 'data.json');
-
-// Crear la carpeta tmp si no existe
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
-}
-
-// Verificar si el archivo data.json existe; si no, crearlo
-if (!fs.existsSync(dataPath)) {
-    fs.writeFileSync(dataPath, JSON.stringify([]), 'utf8');
-}
-
-// Endpoint para guardar intentos
+// Ruta para guardar intentos en data.json
 app.post('/save-attempt', (req, res) => {
     const { key, timestamp, ip } = req.body;
 
@@ -31,52 +19,77 @@ app.post('/save-attempt', (req, res) => {
         return res.status(400).send('Faltan datos necesarios.');
     }
 
-    // Leer los intentos existentes
+    const dataPath = path.join('/tmp', 'data.json');
+
     fs.readFile(dataPath, 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error al leer el archivo data.json:', err);
-            return res.status(500).send('Error al leer el archivo.');
-        }
-
         let attempts = [];
-        try {
-            attempts = JSON.parse(data || '[]');
-        } catch (parseErr) {
-            console.error('Error al parsear el archivo data.json:', parseErr);
-            return res.status(500).send('Error al procesar los datos.');
+
+        if (!err) {
+            try {
+                attempts = JSON.parse(data || '[]');
+            } catch (parseErr) {
+                console.error('Archivo corrupto. Creando un archivo nuevo.');
+            }
         }
 
-        // Agregar el nuevo intento
         attempts.push({ key, timestamp, ip });
 
-        // Guardar los datos actualizados
         fs.writeFile(dataPath, JSON.stringify(attempts, null, 2), 'utf8', (writeErr) => {
             if (writeErr) {
                 console.error('Error al guardar los datos:', writeErr);
                 return res.status(500).send('Error al guardar los datos.');
             }
+
+            console.log('Datos guardados correctamente en data.json');
             res.status(200).send('Intento guardado correctamente.');
         });
     });
 });
 
-// Endpoint para obtener datos
+// Ruta para obtener los datos de data.json
 app.get('/data', (req, res) => {
+    const dataPath = path.join('/tmp', 'data.json');
+
     fs.readFile(dataPath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error al leer el archivo data.json:', err);
             return res.status(500).json({ error: 'No se pudo obtener los datos.' });
         }
 
-        let attempts = [];
-        try {
-            attempts = JSON.parse(data || '[]');
-        } catch (parseErr) {
-            console.error('Error al parsear el archivo data.json:', parseErr);
-            return res.status(500).json({ error: 'Error al procesar los datos.' });
+        res.json(JSON.parse(data || '[]'));
+    });
+});
+
+// Ruta para descargar el archivo data.json
+app.get('/download-data', (req, res) => {
+    const dataPath = path.join('/tmp', 'data.json');
+
+    res.download(dataPath, 'data.json', (err) => {
+        if (err) {
+            console.error('Error al descargar el archivo:', err);
+            res.status(500).send('Error al descargar el archivo');
+        }
+    });
+});
+
+// Ruta protegida para ver el contenido de data.json
+app.get('/view-data', (req, res) => {
+    const authKey = req.query.key;
+
+    if (authKey !== 'lexmonplay') {
+        return res.status(403).send('Acceso denegado');
+    }
+
+    const dataPath = path.join('/tmp', 'data.json');
+
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo:', err);
+            return res.status(500).send('Error al leer el archivo');
         }
 
-        res.json(attempts);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(data || '[]');
     });
 });
 
