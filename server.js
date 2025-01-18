@@ -37,7 +37,7 @@ app.post('/save-attempt', (req, res) => {
 
 
 // Ruta para obtener los datos de data.json
-app.get('/data', (req, res) => {
+app.get('data.json', (req, res) => {
     const filePath = path.join(__dirname, 'data.json');
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
