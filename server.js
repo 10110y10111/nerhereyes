@@ -37,3 +37,49 @@ app.post('/save-attempt', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+
+const fs = require('fs');
+const path = require('path');
+
+// Ruta para ver el contenido de data.json
+app.get('/view-data', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'data.json');
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo:', err);
+            res.status(500).send('Error al leer el archivo');
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(data);
+        }
+    });
+});
+
+// Ruta para descargar data.json
+app.get('/download-data', (req, res) => {
+    const filePath = path.join(__dirname, 'data', 'data.json');
+    res.download(filePath, 'data.json', (err) => {
+        if (err) {
+            console.error('Error al descargar el archivo:', err);
+        }
+    });
+});
+
+app.get('/view-data', (req, res) => {
+    const authKey = req.query.key;
+    if (authKey !== 'lexmonplay') {
+        return res.status(403).send('Acceso denegado');
+    }
+
+    const filePath = path.join(__dirname, 'data', 'data.json');
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo:', err);
+            res.status(500).send('Error al leer el archivo');
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(data);
+        }
+    });
+});
+
