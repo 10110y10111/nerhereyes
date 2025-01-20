@@ -249,4 +249,14 @@ audio {
     font-family:Georgia, 'Times New Roman', Times, serif;
 }
 
+/* CHISTES , PAGE5*/
 
+#strong {
+    font-weight: bold; /* Valor por defecto para strong */
+    font-weight: light;  /* Un poco más ligero que el bold */
+}
+
+.agradecimiento {
+    margin-top: 100px;
+    margin-bottom: 60px;
+}

@@ -24,7 +24,7 @@ document.getElementById('access-form').addEventListener('submit', function (e) {
     // Mensajes de error personalizados
     switch (passwordInput) {
         case 'nadine':
-            customMessage = 'Este no es un acceso a la carta más importante, que si todavia no leiste, la clave es otra. Si la leiste, como escribí: me gustaria remediar un poco lo que hablaba devolviendote un momento de alegria.. Por eso, puede parecer poco y tonto pero, una vez me dijiste algo que me dió mucha risa y te queria contar unos chistes respecto a eso. Podes leerlos, si queres, adivinando la palabra -> objeto pequeño y sencillo pero, "podría ser una buena arma para matar a un zombie".';
+            customMessage = 'Este no es el acceso a la carta principal, que si todavia no leiste, es preciso y mas importante que la veas primero(con otra clave). Si lo hiciste: algo que mencionaba era que me gustaria compensarte de alguna forma, tal vez, dandote un momento alegre con algo que podria sacarte una risa.. puede parecer poco y tonto pero, una vez me dijiste algo que me dió mucha risa y te queria contar unos chistes respecto a eso. Podes leerlos, si queres, adivinando la palabra -> objeto pequeño y sencillo pero, "podría ser una buena arma para matar a un zombie".';
             break;
         case 'palmera':
             customMessage = 'Incorrecto. ¿Quién pondría la clave al lado de la clave?';
