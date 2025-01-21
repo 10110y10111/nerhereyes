@@ -1,21 +1,48 @@
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const app = express();
 
-const sourcePath = path.join(__dirname, 'data', 'data.json');
-const destDir = path.join('C:', 'tmp');
-const destPath = path.join(destDir, 'data.json');
+app.use(express.json()); // Middleware para parsear JSON
+app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos desde "public"
 
-// Verificar que el directorio destino existe, si no, crearlo
-if (!fs.existsSync(destDir)) {
-    fs.mkdirSync(destDir);
-}
+const dataFilePath = path.join(__dirname, 'data', 'data.json');
 
-// Verificar que el archivo fuente existe
-if (fs.existsSync(sourcePath)) {
-    // Copiar el archivo fuente al destino
-    fs.copyFileSync(sourcePath, destPath);
-    console.log(`Archivo copiado a ${destPath}`);
-} else {
-    console.error(`El archivo fuente no existe: ${sourcePath}`);
-    process.exit(1); // Salir con error si el archivo fuente no existe
-}
+// Endpoint para guardar los intentos
+app.post('/save-attempt', (req, res) => {
+    const { key, timestamp } = req.body;
+
+    // Capturar la IP del cliente desde la solicitud
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+    // Leer y actualizar el archivo data.json
+    fs.readFile(dataFilePath, 'utf8', (err, data) => {
+        if (err && err.code !== 'ENOENT') {
+            console.error('Error al leer el archivo:', err);
+            return res.status(500).send('Error al guardar la información');
+        }
+
+        let attempts = [];
+        if (data) {
+            attempts = JSON.parse(data); // Parsear contenido existente si lo hay
+        }
+
+        // Agregar nuevo intento
+        attempts.push({ key, timestamp, ip: clientIp });
+
+        // Guardar los intentos actualizados
+        fs.writeFile(dataFilePath, JSON.stringify(attempts, null, 2), (err) => {
+            if (err) {
+                console.error('Error al escribir en el archivo:', err);
+                return res.status(500).send('Error al guardar la información');
+            }
+            res.send('Intento guardado correctamente');
+        });
+    });
+});
+
+// Iniciar servidor
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+});
