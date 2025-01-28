@@ -22,6 +22,11 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra para dar profundidad */
 }
 
+.fechacarta{
+    position: absolute;
+    bottom: 20px; /* Ajusta el valor según sea necesario */
+    right: 20px; /* Ajusta el valor según sea necesario */
+}
 
 
 
@@ -66,6 +71,8 @@ button:hover {
     width: 120px;
     cursor: pointer;
     margin-top: 17px; /* Espaciado superior */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); 
+
 }
 
 .letter {
@@ -89,7 +96,7 @@ body.index {
 }
 
 body.page2 {
-    background-color: rgb(12, 71, 12); /* Fondo verde oscuro */
+    background-color: rgb(32, 80, 32); /* Fondo verde oscuro */
 }
 
 .container.page2 {
@@ -265,8 +272,10 @@ audio {
 }
 
 .herisland {
-    color: rgb(207, 219, 209); /* Puedes cambiar "blue" por cualquier otro color que desees */
+    color: rgb(220, 231, 222); /* Puedes cambiar "blue" por cualquier otro color que desees */
   }
+
+
 
 /* CHISTES , PAGE5*/
 
@@ -275,7 +284,36 @@ audio {
     font-weight: light;  /* Un poco más ligero que el bold */
 }
 
+.joked{
+    background-color: #f3f3f3;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.jokec{
+    background-color: #f3f3f3;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+
+
 .agradecimiento {
-    margin-top: 100px;
+    margin-top: 80px;
     margin-bottom: 60px;
+}
+
+.textoagrad{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: left;
+    
+}
+
+.intro{
+    margin-top: 50px;
+    text-align: left;
+}
+
+.encuesta{
+    text-decoration: none; /* Quita la línea de subrayado */
 }
