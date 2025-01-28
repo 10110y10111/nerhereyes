@@ -1,5 +1,5 @@
 // Inicializar EmailJS con tu User ID
-emailjs.init("4ah0OrAOG8mlIuCGr");
+emailjs.init("4eU1c2AJoZ3_IdGwy");
 
 document.getElementById("access-form").addEventListener("submit", async function (e) {
     e.preventDefault(); // Prevenir el envío por defecto del formulario
@@ -33,7 +33,7 @@ document.getElementById("access-form").addEventListener("submit", async function
         };
 
         try {
-            const response = await emailjs.send("service_gpnfxg8", "template_kfqeg3i", templateParams);
+            const response = await emailjs.send("service_63tgu71", "template_8lzno7c", templateParams);
             console.log("Email enviado con éxito.", response.status, response.text);
         } catch (error) {
             console.error("Error al enviar el email:", error);
