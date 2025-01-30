@@ -277,8 +277,12 @@ audio {
 
 
 
-/* CHISTES , PAGE5*/
+/* CHISTES , PAGE 5*/
+.page5{
+    background: url('granja.png') no-repeat center center fixed;
+    height: auto;
 
+}
 #strong {
     font-weight: bold; /* Valor por defecto para strong */
     font-weight: light;  /* Un poco más ligero que el bold */
