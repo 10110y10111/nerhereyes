@@ -46,6 +46,7 @@ document.getElementById("access-form").addEventListener("submit", async function
         tami: "page2.html",
         tamarabella: "page4.html",
         engrapadora: "page5.html",
+        juego: "page6.html",
     };
 
     // Mensajes personalizados para claves incorrectas específicas

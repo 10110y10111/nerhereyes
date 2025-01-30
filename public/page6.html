@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barquito</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('estrellado.png') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            cursor: pointer;
+        }
+
+        .sky {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sun, .moon, .boat {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sun {
+            background: radial-gradient(circle, #191918, #1a1a1a);
+            box-shadow: 0 0 50px #080808;
+        }
+
+        .moon {
+            background: radial-gradient(circle, #d3d3d3, #a9a9a9);
+            box-shadow: 0 0 50px #a9a9a9;
+        }
+
+        .boat {
+            width: 120px; /* Tamaño del barco */
+            height: auto; /* Mantener la proporción de la imagen */
+            border-radius: 0; /* El barco no es un círculo */
+            background: transparent; /* Sin fondo */
+            box-shadow: none; /* Sin sombra */
+            transition: transform 0.2s ease; /* Transición para girar */
+        }
+
+        .collision {
+            background: radial-gradient(circle, #ffdb58, #ffa500); /* Amarillo al colisionar */
+            box-shadow: 0 0 50px #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <div class="sky">
+        <div class="sun" id="sun"></div>
+        <div class="moon" id="moon"></div>
+        <img src="barco.png" alt="Barco" class="boat" id="boat"> <!-- Imagen del barco -->
+    </div>
+
+    <script>
+        const sun = document.getElementById('sun');
+        const moon = document.getElementById('moon');
+        const boat = document.getElementById('boat');
+        const sky = document.querySelector('.sky');
+
+        let sunSpeed = 1; // Velocidad inicial del sol
+        let moonSpeed = 2; // Velocidad inicial de la luna
+        let boatSpeedX = 0; // Velocidad inicial del barco en X
+        let boatSpeedY = 0; // Velocidad inicial del barco en Y
+        let boatRotation = 0; // Rotación inicial del barco
+
+        // Posiciones iniciales
+        let sunX = getRandom(0, window.innerWidth - 100);
+        let sunY = getRandom(0, window.innerHeight - 100);
+        let moonX = getRandom(0, window.innerWidth - 100);
+        let moonY = getRandom(0, window.innerHeight - 100);
+        let boatX = window.innerWidth / 2 - 60; // Barco en el centro horizontal
+        let boatY = window.innerHeight - 120; // Barco en la parte inferior
+
+        // Direcciones iniciales
+        let sunDX = sunSpeed;
+        let sunDY = sunSpeed;
+        let moonDX = -moonSpeed;
+        let moonDY = -moonSpeed;
+
+        // Función para generar un número aleatorio dentro de un rango
+        function getRandom(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        // Función para mover un elemento en una dirección específica
+        function moveElement(element, x, y) {
+            element.style.left = `${x}px`;
+            element.style.top = `${y}px`;
+        }
+
+        // Función para detectar colisión entre dos elementos
+        function checkCollision(element1, element2) {
+            const rect1 = element1.getBoundingClientRect();
+            const rect2 = element2.getBoundingClientRect();
+
+            return !(
+                rect1.right < rect2.left ||
+                rect1.left > rect2.right ||
+                rect1.bottom < rect2.top ||
+                rect1.top > rect2.bottom
+            );
+        }
+
+        // Función para golpear el barco
+        function hitBoat(hitter, hitterSpeed) {
+            // Calcular la dirección del golpe
+            const angle = Math.atan2(boatY - hitter.offsetTop, boatX - hitter.offsetLeft);
+            const force = hitterSpeed * 3; // La fuerza del golpe depende de la velocidad del hitter
+
+            // Aplicar la fuerza al barco
+            boatSpeedX = Math.cos(angle) * force;
+            boatSpeedY = Math.sin(angle) * force;
+
+            // Girar el barco según la dirección del golpe
+            boatRotation = angle * (180 / Math.PI); // Convertir a grados
+            boat.style.transform = `rotate(${boatRotation}deg)`;
+        }
+
+        // Función principal de animación
+        function animate() {
+            // Mover el sol
+            sunX += sunDX;
+            sunY += sunDY;
+
+            // Rebotar el sol en los bordes
+            if (sunX <= 0 || sunX >= window.innerWidth - 100) sunDX *= -1;
+            if (sunY <= 0 || sunY >= window.innerHeight - 100) sunDY *= -1;
+
+            // Mover la luna
+            moonX += moonDX;
+            moonY += moonDY;
+
+            // Rebotar la luna en los bordes
+            if (moonX <= 0 || moonX >= window.innerWidth - 100) moonDX *= -1;
+            if (moonY <= 0 || moonY >= window.innerHeight - 100) moonDY *= -1;
+
+            // Mover el barco
+            boatX += boatSpeedX;
+            boatY += boatSpeedY;
+
+            // Reducir la velocidad del barco (fricción)
+            boatSpeedX *= 0.98;
+            boatSpeedY *= 0.98;
+
+            // Limitar el movimiento del barco a los bordes de la pantalla
+            if (boatX <= 0) {
+                boatX = 0;
+                boatSpeedX *= -1; // Rebotar
+            }
+            if (boatX >= window.innerWidth - 120) {
+                boatX = window.innerWidth - 120;
+                boatSpeedX *= -1; // Rebotar
+            }
+            if (boatY <= 0) {
+                boatY = 0;
+                boatSpeedY *= -1; // Rebotar
+            }
+            if (boatY >= window.innerHeight - 120) {
+                boatY = window.innerHeight - 120;
+                boatSpeedY *= -1; // Rebotar
+            }
+
+            // Verificar colisión del sol con el barco
+            if (checkCollision(sun, boat)) {
+                hitBoat(sun, sunSpeed);
+            }
+
+            // Verificar colisión de la luna con el barco
+            if (checkCollision(moon, boat)) {
+                hitBoat(moon, moonSpeed);
+            }
+
+            // Verificar colisión entre el sol y la luna
+            if (checkCollision(sun, moon)) {
+                sun.classList.add('collision');
+                moon.classList.add('collision');
+            } else {
+                sun.classList.remove('collision');
+                moon.classList.remove('collision');
+            }
+
+            // Actualizar posiciones
+            moveElement(sun, sunX, sunY);
+            moveElement(moon, moonX, moonY);
+            moveElement(boat, boatX, boatY);
+
+            // Continuar la animación
+            requestAnimationFrame(animate);
+        }
+
+        // Función para aumentar la velocidad del sol
+        function increaseSunSpeed() {
+            sunSpeed += 1; // Aumentar la velocidad del sol en 1
+            sunDX = sunDX > 0 ? sunSpeed : -sunSpeed; // Actualizar dirección del sol
+            sunDY = sunDY > 0 ? sunSpeed : -sunSpeed;
+        }
+
+        // Función para aumentar la velocidad de la luna
+        function increaseMoonSpeed() {
+            moonSpeed += 1; // Aumentar la velocidad de la luna en 1
+            moonDX = moonDX > 0 ? moonSpeed : -moonSpeed; // Actualizar dirección de la luna
+            moonDY = moonDY > 0 ? moonSpeed : -moonSpeed;
+        }
+
+        // Escuchar clics o toques en el sol
+        sun.addEventListener('click', increaseSunSpeed);
+        sun.addEventListener('touchstart', increaseSunSpeed);
+
+        // Escuchar clics o toques en la luna
+        moon.addEventListener('click', increaseMoonSpeed);
+        moon.addEventListener('touchstart', increaseMoonSpeed);
+
+        // Iniciar la animación
+        animate();
+    </script>
+</body>
+</html>
